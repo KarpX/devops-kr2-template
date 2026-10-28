@@ -1,9 +1,23 @@
-FROM python:latest
+FROM python:3.12-slim
+
+# Создаем непривилегированного пользователя
+RUN groupadd -r appgroup && useradd -r -g appgroup -s /usr/sbin/nologin appuser
 
 WORKDIR /app
 
-COPY . .
-RUN pip install -r requirements.txt
+# Кэширование слоя зависимостей
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8000
-CMD gunicorn --bind 127.0.0.1:8000 app:app
+# Копируем остальной код проекта
+COPY . .
+
+# Назначаем права на каталог
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
+EXPOSE 8003
+
+# Exec-форма для корректной передачи Unix-сигналов (SIGTERM)
+CMD ["python", "app.py"]

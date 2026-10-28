@@ -8,7 +8,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - STUDENT=<Фамилия>
+      - STUDENT=Ivanov
     depends_on:
       redis:
         condition: service_healthy
@@ -20,6 +20,8 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?REDIS_PASSWORD is not set}"]
+    environment:                           # <-- ВОТ ЭТОТ БЛОК ОБЯЗАТЕЛЕН
+      - REDIS_PASSWORD=${REDIS_PASSWORD}   # <-- чтобы $$REDIS_PASSWORD был доступен healthcheck
     volumes:
       - redis_data:/data
     networks:

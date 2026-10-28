@@ -1,3 +1,5 @@
+# KR2: Карпеев
+
 import os
 import socket
 

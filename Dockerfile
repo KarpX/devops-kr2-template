@@ -20,4 +20,4 @@ USER appuser
 EXPOSE 8003
 
 # Exec-форма для корректной передачи Unix-сигналов (SIGTERM)
-CMD ["python", "app.py"]
+CMD ["gunicorn", "-b", "0.0.0.0:8003", "app:app"]
